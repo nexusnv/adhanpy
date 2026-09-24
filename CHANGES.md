@@ -11,6 +11,9 @@
   `TypeError` (`None` still means `NONE`).
 * `PrayerTimes` accepts a `Coordinates` object as well as a
   `(latitude, longitude)` tuple; fixed `src/example` header using the wrong date.
+* Method parameters are now copied per instance: mutating one
+  `CalculationParameters.method_adjustments` no longer leaks into
+  subsequently created instances.
 * Require Python `>=3.11`; CI matrix is now 3.11–3.13 with refreshed dev pins.
 
 ## v1.0.5

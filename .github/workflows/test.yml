@@ -29,4 +29,4 @@ jobs:
           mypy src
       - name: Test with pytest
         run: |
-          pytest
+          pytest --cov-fail-under=95
