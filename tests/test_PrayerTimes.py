@@ -242,6 +242,51 @@ def test_moon_sighting_method_high_lat_different_times_of_year():
     assert prayer_times.isha.astimezone(tz).strftime(format) == "09:03 PM"
 
 
+def test_prayer_times_second_precision_locked():
+    # minute-resolution goldens cannot catch rounding drift; lock full
+    # precision in UTC so future rounding changes show up here
+    date = DateComponents(2015, 7, 12)
+    params = CalculationParameters(method=CalculationMethod.NORTH_AMERICA)
+    params.madhab = Madhab.HANAFI
+    prayer_times = PrayerTimes((35.7750, -78.6336), date, calculation_parameters=params)
+
+    assert prayer_times.fajr.strftime("%H:%M:%S") == "08:42:00"
+    assert prayer_times.sunrise.strftime("%H:%M:%S") == "10:08:00"
+    assert prayer_times.dhuhr.strftime("%H:%M:%S") == "17:21:00"
+    assert prayer_times.asr.strftime("%H:%M:%S") == "22:22:00"
+    assert prayer_times.maghrib.strftime("%H:%M:%S") == "00:32:00"
+    assert prayer_times.isha.strftime("%H:%M:%S") == "01:57:00"
+
+
+@pytest.mark.xfail(
+    reason="polar night raises bare RuntimeError with no message (issue #2.4)",
+    strict=True,
+)
+def test_polar_night_error_message():
+    with pytest.raises(RuntimeError, match="(?i)polar"):
+        PrayerTimes(
+            (68.35, 18.83),
+            DateComponents(2015, 12, 21),
+            CalculationMethod.MUSLIM_WORLD_LEAGUE,
+        )
+
+
+@pytest.mark.xfail(
+    reason="invalid madhab fails with AttributeError instead of ValueError (issue #2.6)",
+    strict=True,
+)
+def test_invalid_madhab_raises_value_error():
+    params = CalculationParameters(method=CalculationMethod.MUSLIM_WORLD_LEAGUE)
+    params.madhab = None
+
+    with pytest.raises(ValueError):
+        PrayerTimes(
+            (35.7750, -78.6336),
+            DateComponents(2015, 7, 12),
+            calculation_parameters=params,
+        )
+
+
 def test_prayer_times_timezone_conversion():
     # Arrange
     calculation_method = CalculationMethod.MOON_SIGHTING_COMMITTEE
