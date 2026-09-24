@@ -11,7 +11,22 @@ and other development tools are made use of.
 
 ## Requirements
 
-* Python >= 3.9
+* Python >= 3.11
+
+Times are returned as timezone-aware UTC datetimes. Passing a `ZoneInfo`
+object converts them on construction; otherwise call `.astimezone(...)`
+yourself. On Windows, install the `tzdata` package so `zoneinfo` can
+resolve IANA time zones (`pip install tzdata`).
+
+## Limitations
+
+* Polar day/night: above the Arctic circle (or below the Antarctic
+  circle) the sun may never rise or set. The library raises a
+  `RuntimeError` with details instead of returning times for those
+  dates — there is no high-latitude fallback.
+* `coordinates` accepts a `(latitude, longitude)` tuple or a
+  `Coordinates` object; `date` accepts a `datetime` or a
+  `DateComponents` (only the calendar date is used).
 
 ## Installation
 
