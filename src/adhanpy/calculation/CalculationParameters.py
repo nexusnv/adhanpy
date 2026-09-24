@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Optional
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.MethodsParameters import METHODS_PARAMETERS
@@ -70,4 +71,6 @@ class CalculationParameters:
     def _set_parameters_using_method(self) -> None:
         method_parameters = METHODS_PARAMETERS[self.method]
         for key, value in method_parameters.items():
-            setattr(self, key, value)
+            # Copy: METHODS_PARAMETERS holds shared template objects and
+            # must never be aliased into (and mutated through) instances.
+            setattr(self, key, copy.copy(value))

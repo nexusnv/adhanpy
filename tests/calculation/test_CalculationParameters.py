@@ -105,3 +105,20 @@ def test_method_has_precedence_over_other_parameters():
 def test_invalid_method_type_raises():
     with pytest.raises((TypeError, ValueError)):
         CalculationParameters(method="bogus", fajr_angle=18)
+
+
+def test_method_adjustments_are_independent_between_instances():
+    first = CalculationParameters(method=CalculationMethod.MUSLIM_WORLD_LEAGUE)
+    second = CalculationParameters(method=CalculationMethod.MUSLIM_WORLD_LEAGUE)
+
+    assert first.method_adjustments is not second.method_adjustments
+
+    first.method_adjustments.dhuhr = 99
+
+    assert second.method_adjustments.dhuhr == 1
+    assert (
+        CalculationParameters(
+            method=CalculationMethod.MUSLIM_WORLD_LEAGUE
+        ).method_adjustments.dhuhr
+        == 1
+    )
