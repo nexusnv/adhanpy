@@ -1,20 +1,17 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def rounded_minute(when: datetime) -> datetime:
     """
-    Round the seconds of a datetime object to 0 or 1 minute
-    and add it to the datetime's minutes when possible or
-    drop the seconds
+    Round a datetime to the nearest minute (half-up) and zero the
+    seconds and microseconds. The carry is applied with timedelta
+    arithmetic so hour/day boundaries roll over correctly
+    (e.g. 10:59:31 rounds to 11:00).
     when: datetime object
-    return: datetime object with seconds rounded to the nearest minute
+    return: datetime object rounded to the nearest minute
     """
-    minute = when.minute
-    second = when.second
-
-    try:
-        rounded = when.replace(minute=int(minute + round(second / 60)), second=0)
-    except ValueError:
-        rounded = when.replace(second=0)
+    rounded = when.replace(second=0, microsecond=0)
+    if when.second >= 30:
+        rounded += timedelta(minutes=1)
 
     return rounded
