@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -18,16 +19,16 @@ from adhanpy.util.CalendarUtil import rounded_minute
 class PrayerTimes:
     def __init__(
         self,
-        coordinates: tuple[float, float],
-        date: datetime,
+        coordinates: tuple[float, float] | Coordinates,
+        date: datetime | DateComponents,
         calculation_method: Optional[CalculationMethod] = None,
         calculation_parameters: Optional[CalculationParameters] = None,
         time_zone: Optional[ZoneInfo] = None,
     ):
         """
         Arguments:
-            coordinates: (latitude, longitude)
-            date: DateComponents
+            coordinates: (latitude, longitude) tuple or Coordinates
+            date: datetime or DateComponents (only the calendar date is used)
             calculation_parameters: CalculationParameters
             time_zone: example ZoneInfo("Europe/London")
         Returns:
@@ -48,8 +49,11 @@ class PrayerTimes:
                 method=calculation_method
             )
 
-        latitude, longitude = coordinates
-        self.coordinates = Coordinates(latitude, longitude)
+        if isinstance(coordinates, Coordinates):
+            self.coordinates = coordinates
+        else:
+            latitude, longitude = coordinates
+            self.coordinates = Coordinates(latitude, longitude)
         self._date_components = DateComponents.from_utc(date)
         self.time_zone = time_zone
 

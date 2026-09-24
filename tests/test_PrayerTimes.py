@@ -1,5 +1,7 @@
 import math
 import pytest
+from datetime import datetime, timezone
+from adhanpy.data.Coordinates import Coordinates
 from adhanpy.util.DateComponents import DateComponents
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.CalculationParameters import CalculationParameters
@@ -277,6 +279,41 @@ def test_invalid_madhab_raises_value_error():
             DateComponents(2015, 7, 12),
             calculation_parameters=params,
         )
+
+
+def test_prayer_times_accepts_coordinates_object():
+    date = DateComponents(2015, 7, 12)
+    params_tuple = CalculationParameters(method=CalculationMethod.NORTH_AMERICA)
+    params_coords = CalculationParameters(method=CalculationMethod.NORTH_AMERICA)
+
+    from_tuple = PrayerTimes(
+        (35.7750, -78.6336), date, calculation_parameters=params_tuple
+    )
+    from_object = PrayerTimes(
+        Coordinates(35.7750, -78.6336), date, calculation_parameters=params_coords
+    )
+
+    assert from_object.fajr == from_tuple.fajr
+    assert from_object.isha == from_tuple.isha
+
+
+def test_prayer_times_accepts_datetime_and_date_components():
+    params_dt = CalculationParameters(method=CalculationMethod.NORTH_AMERICA)
+    params_dc = CalculationParameters(method=CalculationMethod.NORTH_AMERICA)
+
+    from_datetime = PrayerTimes(
+        (35.7750, -78.6336),
+        datetime(2015, 7, 12, tzinfo=timezone.utc),
+        calculation_parameters=params_dt,
+    )
+    from_components = PrayerTimes(
+        (35.7750, -78.6336),
+        DateComponents(2015, 7, 12),
+        calculation_parameters=params_dc,
+    )
+
+    assert from_components.fajr == from_datetime.fajr
+    assert from_components.isha == from_datetime.isha
 
 
 def test_prayer_times_timezone_conversion():
