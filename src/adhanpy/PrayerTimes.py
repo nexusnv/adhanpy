@@ -3,11 +3,11 @@ from typing import Optional
 from zoneinfo import ZoneInfo
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.CalculationParameters import CalculationParameters
+from adhanpy.calculation.Madhab import Madhab
 from adhanpy.calculation.Twilight import (
     season_adjusted_evening_twilight,
     season_adjusted_morning_twilight,
 )
-from adhanpy.data.Prayer import Prayer
 from adhanpy.astronomy.SolarTime import SolarTime
 from adhanpy.data.Coordinates import Coordinates
 from adhanpy.util.TimeComponents import TimeComponents
@@ -99,7 +99,13 @@ class PrayerTimes:
             or self._sunset_components is None
             or tomorrow_sunrise_components is None
         ):
-            raise RuntimeError
+            raise RuntimeError(
+                "Unable to compute prayer times: sunrise, sunset, or solar "
+                "transit is undefined for these coordinates and date "
+                "(polar day/night). "
+                f"coordinates={self.coordinates}, "
+                f"date={self._date_components}."
+            )
 
         # get night length
         tomorrow_sunrise = tomorrow_sunrise_components.date_components(
@@ -177,22 +183,30 @@ class PrayerTimes:
         )
 
     def _set_asr(self):
+        madhab = self.calculation_parameters.madhab
+        if not isinstance(madhab, Madhab):
+            raise ValueError(f"Unknown madhab: {madhab!r}.")
+
+        temp_asr = None
         if time_components := TimeComponents.from_float(
-            self._solar_time.afternoon(
-                self.calculation_parameters.madhab.get_shadow_length()
-            )
+            self._solar_time.afternoon(madhab.get_shadow_length())
         ):
-            if temp_asr := time_components.date_components(self._date_components):
-                self.asr = self._rounded_minute(
-                    self.calculation_parameters.adjustments,
-                    self.calculation_parameters.method_adjustments,
-                    "asr",
-                    temp_asr,
-                )
-        try:
-            self.asr.hour
-        except:
-            raise RuntimeError
+            temp_asr = time_components.date_components(self._date_components)
+
+        if temp_asr is None:
+            raise RuntimeError(
+                "Unable to compute Asr: the afternoon shadow length is "
+                "undefined for these coordinates and date "
+                f"(coordinates={self.coordinates}, "
+                f"date={self._date_components})."
+            )
+
+        self.asr = self._rounded_minute(
+            self.calculation_parameters.adjustments,
+            self.calculation_parameters.method_adjustments,
+            "asr",
+            temp_asr,
+        )
 
     def _set_maghrib(self):
         self.maghrib = self._rounded_minute(
@@ -212,7 +226,7 @@ class PrayerTimes:
             temp_isha = sunset + timedelta(
                 seconds=self.calculation_parameters.isha_interval * 60
             )
-        except:
+        except (ValueError, TypeError):
             timeComponents = TimeComponents.from_float(
                 self._solar_time.hour_angle(
                     -self.calculation_parameters.isha_angle, True

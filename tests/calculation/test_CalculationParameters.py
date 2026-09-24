@@ -102,10 +102,6 @@ def test_method_has_precedence_over_other_parameters():
     assert params.fajr_angle == 18
 
 
-@pytest.mark.xfail(
-    reason="non-CalculationMethod silently coerced to NONE (issue #2.7)",
-    strict=True,
-)
 def test_invalid_method_type_raises():
     with pytest.raises((TypeError, ValueError)):
         CalculationParameters(method="bogus", fajr_angle=18)

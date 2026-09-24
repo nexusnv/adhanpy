@@ -258,10 +258,6 @@ def test_prayer_times_second_precision_locked():
     assert prayer_times.isha.strftime("%H:%M:%S") == "01:57:00"
 
 
-@pytest.mark.xfail(
-    reason="polar night raises bare RuntimeError with no message (issue #2.4)",
-    strict=True,
-)
 def test_polar_night_error_message():
     with pytest.raises(RuntimeError, match="(?i)polar"):
         PrayerTimes(
@@ -271,10 +267,6 @@ def test_polar_night_error_message():
         )
 
 
-@pytest.mark.xfail(
-    reason="invalid madhab fails with AttributeError instead of ValueError (issue #2.6)",
-    strict=True,
-)
 def test_invalid_madhab_raises_value_error():
     params = CalculationParameters(method=CalculationMethod.MUSLIM_WORLD_LEAGUE)
     params.madhab = None

@@ -36,9 +36,15 @@ class CalculationParameters:
         )
 
         # method is last assigned and has precedence and will overwrite other parameters
-        self.method = (
-            method if isinstance(method, CalculationMethod) else CalculationMethod.NONE
-        )
+        if method is None:
+            self.method = CalculationMethod.NONE
+        elif isinstance(method, CalculationMethod):
+            self.method = method
+        else:
+            raise TypeError(
+                "method must be a CalculationMethod or None, "
+                f"got {type(method).__name__}."
+            )
 
         # Used for method adjustments
         self.method_adjustments = (

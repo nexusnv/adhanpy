@@ -15,3 +15,4 @@ class Madhab(Enum):
             return ShadowLength(ShadowLength.SINGLE)
         elif self == Madhab.HANAFI:
             return ShadowLength(ShadowLength.DOUBLE)
+        raise ValueError(f"Unknown madhab: {self!r}")
