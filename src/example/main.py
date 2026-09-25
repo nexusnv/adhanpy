@@ -4,7 +4,7 @@ from adhanpy.calculation import CalculationMethod
 from adhanpy.PrayerTimes import PrayerTimes
 
 
-def print_prayer_times(when: datetime, prayer_times: PrayerTimes):
+def print_prayer_times(when: datetime, prayer_times: PrayerTimes) -> None:
     format = "%H:%M"
     print(f"Prayer times for {when.strftime('%A %d %B %Y')}:")
     print(f"Fajr: {prayer_times.fajr.strftime(format)}")

@@ -14,6 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    package_data={"adhanpy": ["py.typed"]},
     python_requires=">=3.11",
     project_urls={
         'Documentation': "https://github.com/nexusnv/adhanpy/blob/dev/README.md",

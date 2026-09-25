@@ -23,7 +23,7 @@ def days_since_solstice(day_of_year: int, year: int, latitude: float) -> int:
 
 def season_adjusted_morning_twilight(
     latitude: float, day_of_year: int, year: int, sunrise: datetime
-):
+) -> datetime:
     a = 75 + ((28.65 / 55.0) * abs(latitude))
     b = 75 + ((19.44 / 55.0) * abs(latitude))
     c = 75 + ((32.74 / 55.0) * abs(latitude))

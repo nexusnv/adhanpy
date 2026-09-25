@@ -3,7 +3,7 @@ import math
 
 def julian_day(
     year: int, month: int, day: int, hours: float = 0.0, minutes: float = 0.0
-):
+) -> float:
     if minutes != 0.0:
         hours = hours + (minutes / 60.0)
 
@@ -20,6 +20,6 @@ def julian_day(
     return i0 + i1 + D + B - 1524.5
 
 
-def julian_century(JD):
+def julian_century(JD: float) -> float:
     # Equation from Astronomical Algorithms page 163
     return (JD - 2451545.0) / 36525

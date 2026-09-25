@@ -5,12 +5,14 @@ from adhanpy.astronomy.Astronomical import (
     corrected_transit,
 )
 from adhanpy.astronomy.CalendricalHelper import julian_day
+from adhanpy.data.Coordinates import Coordinates
 from adhanpy.data.ShadowLength import ShadowLength
 from adhanpy.astronomy.SolarCoordinates import SolarCoordinates
+from adhanpy.util.DateComponents import DateComponents
 
 
 class SolarTime:
-    def __init__(self, date_components, coordinates):
+    def __init__(self, date_components: DateComponents, coordinates: Coordinates):
         julian_date = julian_day(
             date_components.year, date_components.month, date_components.day
         )
@@ -62,7 +64,7 @@ class SolarTime:
             self.next_solar.declination,
         )
 
-    def hour_angle(self, angle, after_transit):
+    def hour_angle(self, angle: float, after_transit: bool) -> float:
         return corrected_hour_angle(
             self.approximate_transit,
             angle,
@@ -77,7 +79,7 @@ class SolarTime:
             self.next_solar.declination,
         )
 
-    def afternoon(self, shadow_length: ShadowLength):
+    def afternoon(self, shadow_length: ShadowLength) -> float:
         # TODO (from Swift version) source shadow angle calculation
         tangent = abs(self.observer.latitude - self.solar.declination)
         inverse = shadow_length.shadow_length + math.tan(math.radians(tangent))
