@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.CalculationParameters import CalculationParameters
 from adhanpy.calculation.Madhab import Madhab
+from adhanpy.calculation.PrayerAdjustments import PrayerAdjustments
 from adhanpy.calculation.Twilight import (
     season_adjusted_evening_twilight,
     season_adjusted_morning_twilight,
@@ -35,19 +36,15 @@ class PrayerTimes:
             PrayerTimes object with UTC datetimes for fajr, sunrise, dhuhr, asr, maghrib and isha
         """
 
-        if (calculation_parameters and calculation_method) or not (
-            calculation_parameters or calculation_method
-        ):
+        if (calculation_parameters is None) == (calculation_method is None):
             raise ValueError(
                 "Only one of calculation_method or calculation_parameters must be passed."
             )
 
-        self.calculation_parameters = calculation_parameters
+        if calculation_parameters is None:
+            calculation_parameters = CalculationParameters(method=calculation_method)
 
-        if self.calculation_parameters is None:
-            self.calculation_parameters = CalculationParameters(
-                method=calculation_method
-            )
+        self.calculation_parameters = calculation_parameters
 
         if isinstance(coordinates, Coordinates):
             self.coordinates = coordinates
@@ -79,14 +76,14 @@ class PrayerTimes:
         )
 
         time_components = TimeComponents.from_float(self._solar_time.sunrise)
-        self._sunrise_components = (
+        sunrise_components = (
             None
             if time_components is None
             else time_components.date_components(self._date_components)
         )
 
         time_components = TimeComponents.from_float(self._solar_time.sunset)
-        self._sunset_components = (
+        sunset_components = (
             None
             if time_components is None
             else time_components.date_components(self._date_components)
@@ -99,8 +96,8 @@ class PrayerTimes:
 
         if (
             transit is None
-            or self._sunrise_components is None
-            or self._sunset_components is None
+            or sunrise_components is None
+            or sunset_components is None
             or tomorrow_sunrise_components is None
         ):
             raise RuntimeError(
@@ -110,6 +107,11 @@ class PrayerTimes:
                 f"coordinates={self.coordinates}, "
                 f"date={self._date_components}."
             )
+
+        # All components are datetime from here on: the guard above raised
+        # if any of them was None.
+        self._sunrise_components: datetime = sunrise_components
+        self._sunset_components: datetime = sunset_components
 
         # get night length
         tomorrow_sunrise = tomorrow_sunrise_components.date_components(
@@ -131,7 +133,7 @@ class PrayerTimes:
 
         self._adjust_prayers_time_zone()
 
-    def _set_fajr(self):
+    def _set_fajr(self) -> None:
         temp_fajr = None
         if time_components := TimeComponents.from_float(
             self._solar_time.hour_angle(-self.calculation_parameters.fajr_angle, False)
@@ -170,7 +172,7 @@ class PrayerTimes:
             temp_fajr,
         )
 
-    def _set_sunrise(self):
+    def _set_sunrise(self) -> None:
         self.sunrise = self._rounded_minute(
             self.calculation_parameters.adjustments,
             self.calculation_parameters.method_adjustments,
@@ -178,7 +180,7 @@ class PrayerTimes:
             self._sunrise_components,
         )
 
-    def _set_dhuhr(self, time):
+    def _set_dhuhr(self, time: datetime) -> None:
         self.dhuhr = self._rounded_minute(
             self.calculation_parameters.adjustments,
             self.calculation_parameters.method_adjustments,
@@ -186,7 +188,7 @@ class PrayerTimes:
             time,
         )
 
-    def _set_asr(self):
+    def _set_asr(self) -> None:
         madhab = self.calculation_parameters.madhab
         if not isinstance(madhab, Madhab):
             raise ValueError(f"Unknown madhab: {madhab!r}.")
@@ -212,7 +214,7 @@ class PrayerTimes:
             temp_asr,
         )
 
-    def _set_maghrib(self):
+    def _set_maghrib(self) -> None:
         self.maghrib = self._rounded_minute(
             self.calculation_parameters.adjustments,
             self.calculation_parameters.method_adjustments,
@@ -220,7 +222,7 @@ class PrayerTimes:
             self._sunset_components,
         )
 
-    def _set_isha(self, sunset):
+    def _set_isha(self, sunset: datetime) -> None:
         # Isha calculation with check against safe value
         temp_isha = None
         try:
@@ -277,8 +279,12 @@ class PrayerTimes:
         )
 
     def _rounded_minute(
-        self, adjustments, method_adjustments, prayer_name, temp_prayer
-    ):
+        self,
+        adjustments: PrayerAdjustments,
+        method_adjustments: PrayerAdjustments,
+        prayer_name: str,
+        temp_prayer: datetime,
+    ) -> datetime:
         prayer_adjustments = getattr(adjustments, prayer_name)
         method_prayer_adjustments = getattr(method_adjustments, prayer_name)
         return rounded_minute(
@@ -286,7 +292,7 @@ class PrayerTimes:
             + timedelta(minutes=method_prayer_adjustments)
         )
 
-    def _adjust_prayers_time_zone(self):
+    def _adjust_prayers_time_zone(self) -> None:
         if self.time_zone is not None:
             self.fajr = self.fajr.astimezone(self.time_zone)
             self.sunrise = self.sunrise.astimezone(self.time_zone)

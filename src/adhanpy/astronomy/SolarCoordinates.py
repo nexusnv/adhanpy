@@ -15,7 +15,7 @@ from adhanpy.util.FloatUtil import unwind_angle
 
 
 class SolarCoordinates:
-    def __init__(self, julian_day) -> None:
+    def __init__(self, julian_day: float) -> None:
         T = julian_century(julian_day)
         L0 = mean_solar_longitude(T)
         Lp = mean_lunar_longitude(T)
