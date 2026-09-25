@@ -17,6 +17,8 @@
 * Require Python `>=3.11`; CI matrix is now 3.11–3.13 with refreshed dev pins.
 * Ship `py.typed` (PEP 561) and complete type annotations; the package
   is now `mypy --disallow-untyped-defs` clean with no runtime changes.
+* Define the public API surface (`adhanpy.__all__` plus `calculation`
+  and `data` re-exports) and add `PrayerTimes.time_for_prayer(Prayer)`.
 
 ## v1.0.5
 * Fix [#16](https://github.com/alphahm/adhanpy/issues/16) where method is either not provided or

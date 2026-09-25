@@ -12,6 +12,7 @@ from adhanpy.calculation.Twilight import (
 )
 from adhanpy.astronomy.SolarTime import SolarTime
 from adhanpy.data.Coordinates import Coordinates
+from adhanpy.data.Prayer import Prayer
 from adhanpy.util.TimeComponents import TimeComponents
 from adhanpy.util.DateComponents import DateComponents
 from adhanpy.util.CalendarUtil import rounded_minute
@@ -291,6 +292,22 @@ class PrayerTimes:
             (temp_prayer + timedelta(minutes=prayer_adjustments))
             + timedelta(minutes=method_prayer_adjustments)
         )
+
+    def time_for_prayer(self, prayer: Prayer) -> datetime:
+        """Return the computed time for a Prayer enum member."""
+        if prayer == Prayer.FAJR:
+            return self.fajr
+        elif prayer == Prayer.SUNRISE:
+            return self.sunrise
+        elif prayer == Prayer.DHUHR:
+            return self.dhuhr
+        elif prayer == Prayer.ASR:
+            return self.asr
+        elif prayer == Prayer.MAGHRIB:
+            return self.maghrib
+        elif prayer == Prayer.ISHA:
+            return self.isha
+        raise ValueError(f"Unknown prayer: {prayer!r}.")
 
     def _adjust_prayers_time_zone(self) -> None:
         if self.time_zone is not None:
