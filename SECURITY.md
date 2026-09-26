@@ -23,6 +23,9 @@ expect an initial response within 14 days.
 - The library has **zero runtime dependencies** (stdlib only), which is
   its strongest supply-chain property — please keep it that way.
   Dependency updates cover dev tooling and CI actions only.
+- Dependabot `target-branch: dev` covers version updates only; security
+  updates land on the default branch (`master` mirror) and maintainers
+  retarget them to `dev` before merge.
 - The prayer-time math is deterministic and offline; the realistic
   threat model is supply-chain (compromised dev dependency or action)
   and correctness (wrong times), not remote exploitation.
