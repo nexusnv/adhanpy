@@ -51,6 +51,14 @@ prayer_times = PrayerTimes(coordinates, today, CalculationMethod.MOON_SIGHTING_C
 print(prayer_times.time_for_prayer(Prayer.FAJR))
 ```
 
+Qibla direction (degrees clockwise from north) for a location:
+
+```python
+from adhanpy import Qibla
+
+print(Qibla(coordinates).direction)
+```
+
 or a calculation parameters object allowing to choose from different parameters such as angles:
 
 ```python
