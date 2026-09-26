@@ -18,6 +18,7 @@ def test_root_exports_match_all():
     assert set(adhanpy.__all__) == {
         "PrayerTimes",
         "Qibla",
+        "SunnahTimes",
         "CalculationMethod",
         "CalculationParameters",
         "HighLatitudeRule",
