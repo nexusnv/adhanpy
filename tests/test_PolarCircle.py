@@ -20,13 +20,15 @@ def _params(**kwargs):
 
 
 def _ordered(prayer_times):
+    # Only Dhuhr/Asr may coincide (documented saturation); every other
+    # adjacent pair is strictly increasing on all covered cases.
     return (
         prayer_times.fajr
-        <= prayer_times.sunrise
-        <= prayer_times.dhuhr
+        < prayer_times.sunrise
+        < prayer_times.dhuhr
         <= prayer_times.asr
-        <= prayer_times.maghrib
-        <= prayer_times.isha
+        < prayer_times.maghrib
+        < prayer_times.isha
     )
 
 
@@ -106,4 +108,28 @@ def test_coordinates_object_accepted_for_polar():
         Coordinates(*TROMSO), SUMMER, calculation_parameters=_params()
     )
 
+    assert _ordered(prayer_times)
+
+
+def test_asr_saturates_to_dhuhr_at_polar_boundary():
+    # 66.4N on 2015-12-21 computes Asr before Dhuhr without the clamp
+    prayer_times = PrayerTimes(
+        (66.4, 18.96),
+        DateComponents(2015, 12, 21),
+        calculation_parameters=_params(polar_circle_rule=PolarCircleRule.NONE),
+    )
+
+    assert prayer_times.asr == prayer_times.dhuhr
+
+
+def test_extreme_adjustments_saturate_asr_to_dhuhr():
+    params = _params()
+    params.adjustments.dhuhr = 180
+    prayer_times = PrayerTimes(
+        (35.7750, -78.6336),
+        DateComponents(2015, 12, 1),
+        calculation_parameters=params,
+    )
+
+    assert prayer_times.asr == prayer_times.dhuhr
     assert _ordered(prayer_times)

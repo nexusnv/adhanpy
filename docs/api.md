@@ -27,6 +27,11 @@ PrayerTimes(coordinates, date, calculation_method=None,
 - `time_zone`: optional `ZoneInfo`; times are UTC `datetime`s otherwise.
 - Attributes: `fajr`, `sunrise`, `dhuhr`, `asr`, `maghrib`, `isha`
   (timezone-aware `datetime`s).
+- Output contract: markers are always non-decreasing
+  (`fajr <= sunrise <= dhuhr <= asr <= maghrib <= isha`). Inputs that
+  would invert Asr/Dhuhr — polar-boundary geometry, or extreme custom
+  `adjustments` — saturate Asr to Dhuhr instead of returning
+  inverted times.
 - `time_for_prayer(prayer: Prayer) -> datetime` — same values by enum
   (`Prayer.NONE` raises `ValueError`).
 - Raises `ValueError` if both/neither of method/parameters is given;
