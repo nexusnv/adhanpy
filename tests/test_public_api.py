@@ -89,3 +89,17 @@ def test_time_for_prayer_rejects_none():
 
     with pytest.raises(ValueError, match="(?i)prayer"):
         prayer_times.time_for_prayer(Prayer.NONE)
+
+
+def test_docs_cover_public_api():
+    # docs/api.md must name every public export or the reference rots
+    from pathlib import Path
+
+    api_docs = (Path(__file__).resolve().parent.parent / "docs" / "api.md").read_text(
+        encoding="utf-8"
+    )
+
+    for name in adhanpy.__all__:
+        assert name in api_docs
+    for name in ("time_for_prayer", "Qibla", "SunnahTimes"):
+        assert name in api_docs

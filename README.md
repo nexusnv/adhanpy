@@ -125,6 +125,11 @@ print(f"Fajr: {prayer_times.fajr.astimezone(london_zone).strftime('%H:%M')}")
 
 A full example is located in `src/example` of the project directory.
 
+## Documentation
+
+* [`docs/api.md`](docs/api.md) — full API reference with the per-method parameter table.
+* [`docs/migration.md`](docs/migration.md) — migration notes from upstream `1.0.5`.
+
 ## Command line
 
 ```bash
