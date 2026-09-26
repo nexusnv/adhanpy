@@ -8,8 +8,8 @@ and is intentionally untouched.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| dev latest (`1.x`) | :white_check_mark: |
-| `master` mirror / `<= 1.0.5` upstream | :x: |
+| `dev` branch latest (unreleased; the version string still reads `1.0.5` until the next release is cut — identify builds by branch/commit, not version) | :white_check_mark: |
+| Upstream releases `<= 1.0.5` and the `master` mirror | :x: |
 
 ## Reporting a Vulnerability
 
@@ -20,9 +20,11 @@ expect an initial response within 14 days.
 
 ## Scope Notes
 
-- The library has **zero runtime dependencies** (stdlib only), which is
-  its strongest supply-chain property — please keep it that way.
-  Dependency updates cover dev tooling and CI actions only.
+- The library declares **zero runtime dependencies** (stdlib only).
+  Platform note: IANA time-zone resolution on Windows needs the external
+  `tzdata` database (see README) — that is an environment requirement,
+  not a declared package dependency. Please keep declared runtime
+  dependencies at zero.
 - Dependabot `target-branch: dev` covers version updates only; security
   updates land on the default branch (`master` mirror) and maintainers
   retarget them to `dev` before merge.
