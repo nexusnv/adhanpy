@@ -42,6 +42,15 @@ Create a `PrayerTimes` object by passing geo coodinates, datetime and either pas
 prayer_times = PrayerTimes(coordinates, today, CalculationMethod.MOON_SIGHTING_COMMITTEE)
 ```
 
+Public names are re-exported from the package root, so this also works:
+
+```python
+from adhanpy import PrayerTimes, CalculationMethod, Prayer
+
+prayer_times = PrayerTimes(coordinates, today, CalculationMethod.MOON_SIGHTING_COMMITTEE)
+print(prayer_times.time_for_prayer(Prayer.FAJR))
+```
+
 or a calculation parameters object allowing to choose from different parameters such as angles:
 
 ```python
