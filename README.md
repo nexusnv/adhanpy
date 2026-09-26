@@ -125,6 +125,14 @@ print(f"Fajr: {prayer_times.fajr.astimezone(london_zone).strftime('%H:%M')}")
 
 A full example is located in `src/example` of the project directory.
 
+## Command line
+
+```bash
+python -m adhanpy --latitude 35.7750 --longitude -78.6336 --date 2015-07-12 --method NORTH_AMERICA
+```
+
+prints each marker as ISO-8601 UTC (`--date` defaults to today).
+
 ## Development
 
 To install adhanpy for development purposes, run the following:
