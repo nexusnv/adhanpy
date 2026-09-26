@@ -1,4 +1,5 @@
 from adhanpy.PrayerTimes import PrayerTimes
+from adhanpy.Qibla import Qibla
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.CalculationParameters import CalculationParameters
 from adhanpy.calculation.HighLatitudeRule import HighLatitudeRule
@@ -9,6 +10,7 @@ from adhanpy.data.Prayer import Prayer
 
 __all__ = [
     "PrayerTimes",
+    "Qibla",
     "CalculationMethod",
     "CalculationParameters",
     "HighLatitudeRule",
