@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from adhanpy.PrayerTimes import PrayerTimes
 from adhanpy.util.CalendarUtil import rounded_minute
 
@@ -24,10 +24,16 @@ class SunnahTimes:
             time_zone=prayer_times.time_zone,
         )
 
-        night_duration = (tomorrow.fajr - prayer_times.maghrib).total_seconds()
+        # Duration arithmetic runs in UTC: wall-clock subtraction on two
+        # datetimes sharing one DST-observing ZoneInfo ignores the offset
+        # change, shifting markers by an hour on transition nights.
+        zone = prayer_times.maghrib.tzinfo or timezone.utc
+        maghrib_utc = prayer_times.maghrib.astimezone(timezone.utc)
+        fajr_utc = tomorrow.fajr.astimezone(timezone.utc)
+        night_duration = (fajr_utc - maghrib_utc).total_seconds()
         self.middle_of_the_night = rounded_minute(
-            prayer_times.maghrib + timedelta(seconds=int(night_duration / 2))
-        )
+            maghrib_utc + timedelta(seconds=int(night_duration / 2))
+        ).astimezone(zone)
         self.last_third_of_the_night = rounded_minute(
-            prayer_times.maghrib + timedelta(seconds=int(night_duration * (2 / 3)))
-        )
+            maghrib_utc + timedelta(seconds=int(night_duration * (2 / 3)))
+        ).astimezone(zone)

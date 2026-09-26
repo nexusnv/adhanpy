@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from adhanpy import PrayerTimes, SunnahTimes
 from adhanpy.calculation import CalculationMethod, CalculationParameters
 from adhanpy.util.DateComponents import DateComponents
@@ -38,3 +39,21 @@ def test_sunnah_times_ordering():
     assert prayer_times.maghrib < sunnah_times.middle_of_the_night
     assert sunnah_times.middle_of_the_night < sunnah_times.last_third_of_the_night
     assert sunnah_times.last_third_of_the_night < tomorrow.fajr
+
+
+def test_sunnah_times_across_dst_transition():
+    # US springs forward on 2015-03-08 (02:00 EST -> 03:00 EDT); duration
+    # math must use absolute elapsed time, not wall-clock subtraction
+    tz = ZoneInfo("America/New_York")
+    prayer_times = PrayerTimes(
+        (35.7750, -78.6336),
+        DateComponents(2015, 3, 7),
+        CalculationMethod.MUSLIM_WORLD_LEAGUE,
+        time_zone=tz,
+    )
+    sunnah_times = SunnahTimes(prayer_times)
+
+    assert sunnah_times.middle_of_the_night == datetime(2015, 3, 7, 23, 43, tzinfo=tz)
+    assert sunnah_times.last_third_of_the_night == datetime(
+        2015, 3, 8, 1, 32, tzinfo=tz
+    )
