@@ -32,8 +32,9 @@ class CalculationParameters:
         self.isha_angle = isha_angle
 
         # Used to optionally add or subtract a set amount of time from each prayer time
+        # (copied: a caller-provided object is never aliased into the instance)
         self.adjustments = (
-            adjustments if adjustments is not None else PrayerAdjustments()
+            copy.copy(adjustments) if adjustments is not None else PrayerAdjustments()
         )
 
         # method is last assigned and has precedence and will overwrite other parameters
@@ -47,9 +48,9 @@ class CalculationParameters:
                 f"got {type(method).__name__}."
             )
 
-        # Used for method adjustments
+        # Used for method adjustments (copied for the same reason)
         self.method_adjustments = (
-            method_adjustments
+            copy.copy(method_adjustments)
             if method_adjustments is not None
             else PrayerAdjustments()
         )

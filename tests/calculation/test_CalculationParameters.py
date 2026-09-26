@@ -2,6 +2,7 @@ import pytest
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.CalculationParameters import CalculationParameters
 from adhanpy.calculation.HighLatitudeRule import HighLatitudeRule
+from adhanpy.calculation.PrayerAdjustments import PrayerAdjustments
 
 
 @pytest.mark.parametrize(
@@ -122,3 +123,18 @@ def test_method_adjustments_are_independent_between_instances():
         ).method_adjustments.dhuhr
         == 1
     )
+
+
+def test_caller_provided_adjustments_are_copied():
+    shared = PrayerAdjustments(fajr=2)
+    first = CalculationParameters(
+        method=CalculationMethod.NORTH_AMERICA, adjustments=shared
+    )
+    second = CalculationParameters(
+        method=CalculationMethod.NORTH_AMERICA, adjustments=shared
+    )
+
+    first.adjustments.fajr = 99
+
+    assert second.adjustments.fajr == 2
+    assert shared.fajr == 2
