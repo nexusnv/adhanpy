@@ -20,6 +20,8 @@
 * Define the public API surface (`adhanpy.__all__` plus `calculation`
   and `data` re-exports) and add `PrayerTimes.time_for_prayer(Prayer)`.
 * Add `Qibla` direction calculation ported from upstream adhan.
+* Add `SunnahTimes` (middle and last third of the night) ported
+  from upstream adhan.
 
 ## v1.0.5
 * Fix [#16](https://github.com/alphahm/adhanpy/issues/16) where method is either not provided or

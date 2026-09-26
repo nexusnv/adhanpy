@@ -59,6 +59,16 @@ from adhanpy import Qibla
 print(Qibla(coordinates).direction)
 ```
 
+Sunnah night markers (middle and last third of the night):
+
+```python
+from adhanpy import SunnahTimes
+
+sunnah_times = SunnahTimes(prayer_times)
+print(sunnah_times.middle_of_the_night)
+print(sunnah_times.last_third_of_the_night)
+```
+
 or a calculation parameters object allowing to choose from different parameters such as angles:
 
 ```python
