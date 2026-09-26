@@ -311,6 +311,13 @@ class PrayerTimes:
             temp_asr,
         )
 
+        if self.asr < self.dhuhr:
+            # Near the polar boundary the sun may never reach the shadow
+            # altitude and the hour-angle math lands before transit; Asr
+            # cannot precede Dhuhr (also covers dhuhr-only adjustments
+            # and rounding splits).
+            self.asr = self.dhuhr
+
     def _set_maghrib(self) -> None:
         self.maghrib = self._rounded_minute(
             self.calculation_parameters.adjustments,

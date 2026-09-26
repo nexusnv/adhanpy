@@ -30,6 +30,8 @@
   within [0, 90], non-negative Isha interval.
 * Build backend is now hatchling (setup.py removed); CI covers
   Python 3.11–3.14.
+* Asr is clamped to Dhuhr when polar-boundary geometry would place
+  it earlier (total marker ordering now holds everywhere).
 * Dev process: ruff lint gate (`F`, `E4/E7/E9`) over `src/` and
   `tests/`, and `mypy --disallow-untyped-defs` enforced via config.
 

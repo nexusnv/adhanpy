@@ -19,13 +19,14 @@ def _params(**kwargs):
     return CalculationParameters(method=CalculationMethod.MUSLIM_WORLD_LEAGUE, **kwargs)
 
 
-def _bracketed(prayer_times):
-    # At extreme latitudes the estimators can invert adjacent markers
-    # by minutes (pre-existing edge artifact, tracked separately); the
-    # fallback guarantees a finite schedule bracketing the day.
+def _ordered(prayer_times):
     return (
-        prayer_times.fajr <= prayer_times.dhuhr <= prayer_times.isha
-        and prayer_times.sunrise <= prayer_times.maghrib
+        prayer_times.fajr
+        <= prayer_times.sunrise
+        <= prayer_times.dhuhr
+        <= prayer_times.asr
+        <= prayer_times.maghrib
+        <= prayer_times.isha
     )
 
 
@@ -33,7 +34,7 @@ def _bracketed(prayer_times):
 def test_default_assumes_nearest_latitude(date):
     prayer_times = PrayerTimes(TROMSO, date, calculation_parameters=_params())
 
-    assert _bracketed(prayer_times)
+    assert _ordered(prayer_times)
     # clamped toward the equator, near the solstice boundary (~66.5)
     assert 60 < prayer_times.coordinates.latitude < TROMSO[0]
     assert prayer_times.coordinates.longitude == TROMSO[1]
@@ -46,7 +47,7 @@ def test_nearest_day_keeps_location_but_shifts_date():
         calculation_parameters=_params(polar_circle_rule=PolarCircleRule.NEAREST_DAY),
     )
 
-    assert _bracketed(prayer_times)
+    assert _ordered(prayer_times)
     assert prayer_times.coordinates.latitude == TROMSO[0]
     assert prayer_times.fajr.date() != date(2015, 12, 21)
 
@@ -105,4 +106,4 @@ def test_coordinates_object_accepted_for_polar():
         Coordinates(*TROMSO), SUMMER, calculation_parameters=_params()
     )
 
-    assert _bracketed(prayer_times)
+    assert _ordered(prayer_times)
