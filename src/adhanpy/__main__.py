@@ -33,7 +33,7 @@ def main(argv: list[str] | None = None) -> None:
         date = datetime.now(timezone.utc)
     else:
         try:
-            date = datetime.fromisoformat(args.date)
+            date = datetime.strptime(args.date, "%Y-%m-%d")
         except ValueError:
             build_parser().error(f"invalid --date (expected YYYY-MM-DD): {args.date}")
 

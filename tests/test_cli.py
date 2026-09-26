@@ -53,6 +53,22 @@ def test_cli_rejects_bad_date():
     assert excinfo.value.code == 2
 
 
+def test_cli_rejects_datetime_for_date():
+    with pytest.raises(SystemExit) as excinfo:
+        main(
+            [
+                "--latitude",
+                "35",
+                "--longitude",
+                "-78",
+                "--date",
+                "2015-07-12T00:00:00",
+            ]
+        )
+
+    assert excinfo.value.code == 2
+
+
 def test_cli_requires_coordinates():
     with pytest.raises(SystemExit) as excinfo:
         main(["--latitude", "35"])
