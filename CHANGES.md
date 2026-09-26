@@ -20,6 +20,9 @@
 * Define the public API surface (`adhanpy.__all__` plus `calculation`
   and `data` re-exports) and add `PrayerTimes.time_for_prayer(Prayer)`.
 * Add `Qibla` direction calculation ported from upstream adhan.
+* Add polar-day/night estimation strategies (`PolarCircleRule`:
+  `NEAREST_LATITUDE` by default, `NEAREST_DAY`, `MAKKAH`, `NONE` to
+  keep the old raise).
 * Add `SunnahTimes` (middle and last third of the night) ported
   from upstream adhan.
 * Add `python -m adhanpy` CLI printing ISO-8601 UTC markers.
