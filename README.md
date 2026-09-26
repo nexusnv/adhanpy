@@ -21,9 +21,14 @@ resolve IANA time zones (`pip install tzdata`).
 ## Limitations
 
 * Polar day/night: above the Arctic circle (or below the Antarctic
-  circle) the sun may never rise or set. The library raises a
-  `RuntimeError` with details instead of returning times for those
-  dates — there is no high-latitude fallback.
+  circle) the sun may never rise or set. By default (`NEAREST_LATITUDE`)
+  times are estimated at the nearest latitude where it does (Aqrab
+  al-Bilad); alternatives are `NEAREST_DAY` (nearest date with a normal
+  schedule — returned datetimes carry that date), `MAKKAH` (Makkah's
+  schedule), and `NONE` (raise `RuntimeError` as before). Set via
+  `CalculationParameters(polar_circle_rule=...)`. Estimates are
+  approximations: near the polar boundary adjacent markers can invert
+  by minutes.
 * `coordinates` accepts a `(latitude, longitude)` tuple or a
   `Coordinates` object; `date` accepts a `datetime` or a
   `DateComponents` (only the calendar date is used).

@@ -88,6 +88,9 @@ CalculationParameters(method=None, adjustments=None,
 ## Value types
 
 - `Coordinates(latitude, longitude)` — dataclass of floats.
+- `PolarCircleRule` — `NEAREST_LATITUDE` (default), `NEAREST_DAY`,
+  `MAKKAH`, `NONE`; estimation strategy for polar day/night, set via
+  `CalculationParameters(polar_circle_rule=...)`.
 - `Prayer` — `FAJR, SUNRISE, DHUHR, ASR, MAGHRIB, ISHA` (`NONE` sentinel).
 - `PrayerAdjustments(fajr=0, sunrise=0, dhuhr=0, asr=0, maghrib=0, isha=0)` — minute offsets.
 - `NightPortions(fajr, isha)` — fractions from `night_portions()`.

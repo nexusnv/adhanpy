@@ -8,6 +8,7 @@ from adhanpy.calculation.CalculationParameters import CalculationParameters
 from adhanpy.astronomy.SolarTime import SolarTime
 from adhanpy.util.TimeComponents import TimeComponents
 from adhanpy.calculation.Madhab import Madhab
+from adhanpy.calculation.PolarCircleRule import PolarCircleRule
 from adhanpy.PrayerTimes import PrayerTimes
 from adhanpy.calculation.PrayerAdjustments import PrayerAdjustments
 from zoneinfo import ZoneInfo
@@ -261,11 +262,14 @@ def test_prayer_times_second_precision_locked():
 
 
 def test_polar_night_error_message():
+    params = CalculationParameters(method=CalculationMethod.MUSLIM_WORLD_LEAGUE)
+    params.polar_circle_rule = PolarCircleRule.NONE
+
     with pytest.raises(RuntimeError, match="(?i)polar"):
         PrayerTimes(
             (68.35, 18.83),
             DateComponents(2015, 12, 21),
-            CalculationMethod.MUSLIM_WORLD_LEAGUE,
+            calculation_parameters=params,
         )
 
 

@@ -4,6 +4,7 @@ from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.MethodsParameters import METHODS_PARAMETERS
 from adhanpy.calculation.Madhab import Madhab
 from adhanpy.calculation.HighLatitudeRule import HighLatitudeRule
+from adhanpy.calculation.PolarCircleRule import PolarCircleRule
 from adhanpy.calculation.PrayerAdjustments import PrayerAdjustments
 from adhanpy.data.NightPortions import NightPortions
 
@@ -17,6 +18,7 @@ class CalculationParameters:
         isha_interval: int = 0,
         fajr_angle: float = 0.0,
         isha_angle: float = 0.0,
+        polar_circle_rule: PolarCircleRule = PolarCircleRule.NEAREST_LATITUDE,
     ) -> None:
         # The madhab used to calculate Asr
         self.madhab = Madhab.SHAFI
@@ -30,6 +32,14 @@ class CalculationParameters:
         # fajr and isha angles
         self.fajr_angle = fajr_angle
         self.isha_angle = isha_angle
+
+        # Estimation strategy when the sun never rises/sets (polar day/night)
+        if not isinstance(polar_circle_rule, PolarCircleRule):
+            raise TypeError(
+                "polar_circle_rule must be a PolarCircleRule, "
+                f"got {type(polar_circle_rule).__name__}."
+            )
+        self.polar_circle_rule = polar_circle_rule
 
         # Used to optionally add or subtract a set amount of time from each prayer time
         # (copied: a caller-provided object is never aliased into the instance)

@@ -8,6 +8,7 @@ from adhanpy.calculation import (
     CalculationParameters,
     HighLatitudeRule,
     Madhab,
+    PolarCircleRule,
     PrayerAdjustments,
 )
 from adhanpy.data import Coordinates, NightPortions, Prayer, ShadowLength
@@ -24,6 +25,7 @@ def test_root_exports_match_all():
         "CalculationParameters",
         "HighLatitudeRule",
         "Madhab",
+        "PolarCircleRule",
         "PrayerAdjustments",
         "Coordinates",
         "Prayer",
@@ -36,6 +38,7 @@ def test_root_exports_match_all():
         "CalculationParameters": CalculationParameters,
         "HighLatitudeRule": HighLatitudeRule,
         "Madhab": Madhab,
+        "PolarCircleRule": PolarCircleRule,
         "PrayerAdjustments": PrayerAdjustments,
         "Coordinates": Coordinates,
         "Prayer": Prayer,
@@ -51,6 +54,7 @@ def test_subpackage_exports():
         "CalculationParameters": CalculationParameters,
         "HighLatitudeRule": HighLatitudeRule,
         "Madhab": Madhab,
+        "PolarCircleRule": PolarCircleRule,
         "PrayerAdjustments": PrayerAdjustments,
     } == {name: getattr(calculation, name) for name in calculation.__all__}
     assert {

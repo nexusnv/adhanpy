@@ -1,10 +1,12 @@
 from __future__ import annotations
+import math
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.CalculationParameters import CalculationParameters
 from adhanpy.calculation.Madhab import Madhab
+from adhanpy.calculation.PolarCircleRule import PolarCircleRule
 from adhanpy.calculation.PrayerAdjustments import PrayerAdjustments
 from adhanpy.calculation.Twilight import (
     season_adjusted_evening_twilight,
@@ -13,9 +15,70 @@ from adhanpy.calculation.Twilight import (
 from adhanpy.astronomy.SolarTime import SolarTime
 from adhanpy.data.Coordinates import Coordinates
 from adhanpy.data.Prayer import Prayer
+from adhanpy.Qibla import MAKKAH
 from adhanpy.util.TimeComponents import TimeComponents
 from adhanpy.util.DateComponents import DateComponents
 from adhanpy.util.CalendarUtil import rounded_minute
+
+
+def _schedule_defined(
+    date_components: DateComponents, coordinates: Coordinates
+) -> bool:
+    # Exactly what PrayerTimes.__init__ needs: today's sunrise/sunset plus
+    # tomorrow's sunrise (for the night length). Both days are probed
+    # because validity can differ across midnight at the razor edge.
+    today = SolarTime(date_components, coordinates)
+    if math.isnan(today.sunrise) or math.isnan(today.sunset):
+        return False
+    base = datetime(
+        date_components.year,
+        date_components.month,
+        date_components.day,
+        tzinfo=timezone.utc,
+    )
+    tomorrow = SolarTime(DateComponents.from_utc(base + timedelta(days=1)), coordinates)
+    return not math.isnan(tomorrow.sunrise)
+
+
+def _nearest_latitude_with_sunrise_sunset(
+    latitude: float, longitude: float, date_components: DateComponents
+) -> float:
+    # Rise/set existence is monotonic in |latitude| for a fixed date, so
+    # bisect between the (invalid) requested latitude and the equator,
+    # where the sun always rises and sets.
+    sign = 1.0 if latitude >= 0 else -1.0
+    invalid, valid = abs(latitude), 0.0
+    for _ in range(60):
+        mid = (invalid + valid) / 2
+        if _schedule_defined(date_components, Coordinates(sign * mid, longitude)):
+            valid = mid
+        else:
+            invalid = mid
+    # Back off toward the equator: exactly at the boundary the sun only
+    # grazes the horizon (minutes-long night), where the night-fraction
+    # caps for Fajr/Isha invert. Half a degree keeps the estimate nearest
+    # while restoring a usable day/night split.
+    return sign * max(valid - 0.5, 0.0)
+
+
+def _nearest_date_with_sunrise_sunset(
+    latitude: float, longitude: float, date_components: DateComponents
+) -> DateComponents:
+    coordinates = Coordinates(latitude, longitude)
+    base = datetime(
+        date_components.year,
+        date_components.month,
+        date_components.day,
+        tzinfo=timezone.utc,
+    )
+    for offset in range(1, 367):
+        for delta in (-offset, offset):
+            candidate = DateComponents.from_utc(base + timedelta(days=delta))
+            if _schedule_defined(candidate, coordinates):
+                return candidate
+    raise RuntimeError(  # pragma: no cover - every location has rise/set days
+        "No date with sunrise/sunset found within a year."
+    )
 
 
 class PrayerTimes:
@@ -54,6 +117,8 @@ class PrayerTimes:
             self.coordinates = Coordinates(latitude, longitude)
         self._date_components = DateComponents.from_utc(date)
         self.time_zone = time_zone
+
+        self._resolve_polar_circle()
 
         self._prayer_date = datetime(
             self._date_components.year,
@@ -133,6 +198,37 @@ class PrayerTimes:
         self._set_isha(self._sunset_components)
 
         self._adjust_prayers_time_zone()
+
+    def _resolve_polar_circle(self) -> None:
+        """
+        Estimate coordinates/date when the sun never rises or sets, per
+        the configured PolarCircleRule. No-op for normal days.
+        """
+        rule = self.calculation_parameters.polar_circle_rule
+        if _schedule_defined(self._date_components, self.coordinates):
+            return
+
+        if rule == PolarCircleRule.NONE:
+            return
+        elif rule == PolarCircleRule.NEAREST_LATITUDE:
+            self.coordinates = Coordinates(
+                _nearest_latitude_with_sunrise_sunset(
+                    self.coordinates.latitude,
+                    self.coordinates.longitude,
+                    self._date_components,
+                ),
+                self.coordinates.longitude,
+            )
+        elif rule == PolarCircleRule.NEAREST_DAY:
+            self._date_components = _nearest_date_with_sunrise_sunset(
+                self.coordinates.latitude,
+                self.coordinates.longitude,
+                self._date_components,
+            )
+        elif rule == PolarCircleRule.MAKKAH:
+            self.coordinates = Coordinates(MAKKAH.latitude, MAKKAH.longitude)
+        else:
+            raise ValueError(f"Unknown polar circle rule: {rule!r}.")
 
     def _set_fajr(self) -> None:
         temp_fajr = None
