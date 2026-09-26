@@ -67,6 +67,19 @@ class CalculationParameters:
 
         self._set_parameters_using_method()
 
+        if not 0 <= self.fajr_angle <= 90:
+            raise ValueError(
+                f"Fajr angle must be within [0, 90], got {self.fajr_angle}."
+            )
+        if not 0 <= self.isha_angle <= 90:
+            raise ValueError(
+                f"Isha angle must be within [0, 90], got {self.isha_angle}."
+            )
+        if self.isha_interval < 0:
+            raise ValueError(
+                f"Isha interval must be non-negative, got {self.isha_interval}."
+            )
+
     def night_portions(self) -> NightPortions:
         if self.high_latitude_rule == HighLatitudeRule.MIDDLE_OF_THE_NIGHT:
             return NightPortions(1.0 / 2.0, 1.0 / 2.0)

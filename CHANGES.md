@@ -26,6 +26,10 @@
 * Add `SunnahTimes` (middle and last third of the night) ported
   from upstream adhan.
 * Add `python -m adhanpy` CLI printing ISO-8601 UTC markers.
+* Validate inputs: coordinates within [-90, 90]/[-180, 180], angles
+  within [0, 90], non-negative Isha interval.
+* Build backend is now hatchling (setup.py removed); CI covers
+  Python 3.11–3.14.
 * Dev process: ruff lint gate (`F`, `E4/E7/E9`) over `src/` and
   `tests/`, and `mypy --disallow-untyped-defs` enforced via config.
 
