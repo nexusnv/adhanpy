@@ -22,6 +22,7 @@
 * Add `Qibla` direction calculation ported from upstream adhan.
 * Add `SunnahTimes` (middle and last third of the night) ported
   from upstream adhan.
+* Add `python -m adhanpy` CLI printing ISO-8601 UTC markers.
 * Dev process: ruff lint gate (`F`, `E4/E7/E9`) over `src/` and
   `tests/`, and `mypy --disallow-untyped-defs` enforced via config.
 
