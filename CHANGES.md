@@ -22,6 +22,8 @@
 * Add `Qibla` direction calculation ported from upstream adhan.
 * Add `SunnahTimes` (middle and last third of the night) ported
   from upstream adhan.
+* Dev process: ruff lint gate (`F`, `E4/E7/E9`) over `src/` and
+  `tests/`, and `mypy --disallow-untyped-defs` enforced via config.
 
 ## v1.0.5
 * Fix [#16](https://github.com/alphahm/adhanpy/issues/16) where method is either not provided or

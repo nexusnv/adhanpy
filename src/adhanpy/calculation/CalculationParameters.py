@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Optional
+from typing import Optional
 from adhanpy.calculation.CalculationMethod import CalculationMethod
 from adhanpy.calculation.MethodsParameters import METHODS_PARAMETERS
 from adhanpy.calculation.Madhab import Madhab

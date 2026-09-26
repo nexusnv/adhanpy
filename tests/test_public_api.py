@@ -2,6 +2,7 @@ import pytest
 
 import adhanpy
 from adhanpy import PrayerTimes as RootPrayerTimes
+from adhanpy import Qibla, SunnahTimes
 from adhanpy.calculation import (
     CalculationMethod,
     CalculationParameters,
@@ -15,7 +16,7 @@ from adhanpy.util.DateComponents import DateComponents
 
 
 def test_root_exports_match_all():
-    assert set(adhanpy.__all__) == {
+    assert getattr(adhanpy, "__all__") == [
         "PrayerTimes",
         "Qibla",
         "SunnahTimes",
@@ -26,28 +27,38 @@ def test_root_exports_match_all():
         "PrayerAdjustments",
         "Coordinates",
         "Prayer",
-    }
-    for name in adhanpy.__all__:
-        assert getattr(adhanpy, name) is not None
+    ]
+    assert {
+        "PrayerTimes": PrayerTimes,
+        "Qibla": Qibla,
+        "SunnahTimes": SunnahTimes,
+        "CalculationMethod": CalculationMethod,
+        "CalculationParameters": CalculationParameters,
+        "HighLatitudeRule": HighLatitudeRule,
+        "Madhab": Madhab,
+        "PrayerAdjustments": PrayerAdjustments,
+        "Coordinates": Coordinates,
+        "Prayer": Prayer,
+    } == {name: getattr(adhanpy, name) for name in adhanpy.__all__}
     assert adhanpy.PrayerTimes is RootPrayerTimes
 
 
 def test_subpackage_exports():
     from adhanpy import calculation, data
 
-    assert set(calculation.__all__) == {
-        "CalculationMethod",
-        "CalculationParameters",
-        "HighLatitudeRule",
-        "Madhab",
-        "PrayerAdjustments",
-    }
-    assert set(data.__all__) == {
-        "Coordinates",
-        "NightPortions",
-        "Prayer",
-        "ShadowLength",
-    }
+    assert {
+        "CalculationMethod": CalculationMethod,
+        "CalculationParameters": CalculationParameters,
+        "HighLatitudeRule": HighLatitudeRule,
+        "Madhab": Madhab,
+        "PrayerAdjustments": PrayerAdjustments,
+    } == {name: getattr(calculation, name) for name in calculation.__all__}
+    assert {
+        "Coordinates": Coordinates,
+        "NightPortions": NightPortions,
+        "Prayer": Prayer,
+        "ShadowLength": ShadowLength,
+    } == {name: getattr(data, name) for name in data.__all__}
 
 
 def test_time_for_prayer_matches_attributes():
