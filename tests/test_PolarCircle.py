@@ -92,6 +92,14 @@ def test_unknown_polar_rule_raises():
         PrayerTimes(TROMSO, WINTER, calculation_parameters=params)
 
 
+def test_invalid_polar_rule_type_raises_at_construction():
+    with pytest.raises(TypeError, match="(?i)polar"):
+        CalculationParameters(
+            method=CalculationMethod.MUSLIM_WORLD_LEAGUE,
+            polar_circle_rule="bogus",
+        )
+
+
 def test_coordinates_object_accepted_for_polar():
     prayer_times = PrayerTimes(
         Coordinates(*TROMSO), SUMMER, calculation_parameters=_params()

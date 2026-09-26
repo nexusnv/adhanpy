@@ -34,6 +34,11 @@ class CalculationParameters:
         self.isha_angle = isha_angle
 
         # Estimation strategy when the sun never rises/sets (polar day/night)
+        if not isinstance(polar_circle_rule, PolarCircleRule):
+            raise TypeError(
+                "polar_circle_rule must be a PolarCircleRule, "
+                f"got {type(polar_circle_rule).__name__}."
+            )
         self.polar_circle_rule = polar_circle_rule
 
         # Used to optionally add or subtract a set amount of time from each prayer time
