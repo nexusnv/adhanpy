@@ -1,10 +1,37 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "adhanpy"
+version = "1.0.5"
+description = "An offline library calculating prayer times"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "alphahm" }]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/nexusnv/adhanpy"
+Documentation = "https://github.com/nexusnv/adhanpy/blob/dev/README.md"
+Changelog = "https://github.com/nexusnv/adhanpy/blob/dev/CHANGES.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/adhanpy"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=adhanpy --cov-branch"
 testpaths = "tests"
+
+[tool.black]
+target-version = ["py311"]
 
 [tool.mypy]
 show_error_codes = true
