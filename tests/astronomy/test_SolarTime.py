@@ -32,6 +32,7 @@ def test_solar_time():
 def test_right_ascension_edge_case():
     coordinates = Coordinates(35 + 47.0 / 60.0, -78 - 39.0 / 60.0)
 
+    previous_time = None
     for i in range(365):
         time = SolarTime(_make_date_with_offset(2016, 1, 1, i), coordinates)
 

@@ -95,8 +95,9 @@ def mean_obliquity_of_the_ecliptic(T: float) -> float:
 
 def apparent_obliquity_of_the_ecliptic(T: float, ε0: float) -> float:
     # Equation from Astronomical Algorithms page 165
-    O = 125.04 - (1934.136 * T)
-    return ε0 + (0.00256 * math.cos(math.radians(O)))
+    # (node: longitude of the ascending lunar node, cf. Ω elsewhere)
+    node = 125.04 - (1934.136 * T)
+    return ε0 + (0.00256 * math.cos(math.radians(node)))
 
 
 def altitude_of_celestial_body(φ: float, δ: float, H: float) -> float:

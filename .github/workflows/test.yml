@@ -24,6 +24,7 @@ jobs:
       - name: lint
         run: |
           black --check src/
+          ruff check src/ tests/
       - name: mypy
         run: |
           mypy src
